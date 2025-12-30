@@ -1,0 +1,191 @@
+{
+  "name": "Gmail meeting",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -1008,
+        -192
+      ],
+      "id": "531bfb97-a247-4276-be02-11079ed86c67",
+      "name": "When chat message received",
+      "webhookId": "57c3a204-ff5c-4f6f-97f4-d94cfe11d34f"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are an AI assistant.\n\nWhen a user sends a message:\n1. Reply politely to the user\n2. Create a calendar event using the connected Google Calendar tool\n3. The event date is fixed and already configured\n4. Send a confirmation email using Gmail\n5. Do not ask the user for date or time                     (OR)                  If user asks to notify friends, send the email to all predefined friend email address.                                                                         "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -608,
+        -304
+      ],
+      "id": "6bd62db4-b99a-4d79-9c49-ac00eba40f64",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -784,
+        0
+      ],
+      "id": "4dc524ba-c1ba-4389-a795-9ef3e6063118",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "KyrFzbRHyy7tFBB8",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -592,
+        -16
+      ],
+      "id": "6e01ee75-076d-4c6e-8ae3-5c88d42b2866",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "sendTo": "gangadevi2931@gmail.com",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        -144,
+        -96
+      ],
+      "id": "1dd2383a-f482-441f-8f77-c4631994473e",
+      "name": "Send a message in Gmail",
+      "webhookId": "fcbca6cc-4642-469f-8fba-e560b71e6829",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "NWN57FYAVQfHc3eN",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "gangadevi2931@gmail.com",
+          "mode": "id"
+        },
+        "additionalFields": {
+          "description": "Training Session to learn new tools, workflows, or technologies.",
+          "summary": "Training Sesstion"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -208,
+        16
+      ],
+      "id": "90297ad4-eaea-4f72-9d0c-aac40b91b627",
+      "name": "Create an event in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "90pj8id6FuivTkSj",
+          "name": "Google Calendar account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Create an event in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4459cb73-3d6e-4d6e-a442-51bd15dfb92c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d80c2718d71dcb67f863dc48084433d23332af682ac3c4d9ddced8fa6a7d62c4"
+  },
+  "id": "COH3xYx5RBq56M0V",
+  "tags": []
+}
