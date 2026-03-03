@@ -1,0 +1,96 @@
+{
+  "name": "AI Text Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -560,
+        80
+      ],
+      "id": "fc94b570-3be9-4faf-9a77-8003efce55df",
+      "name": "When chat message received",
+      "webhookId": "1ea63aec-a4ea-456b-af5a-b2eb02da5a95"
+    },
+    {
+      "parameters": {
+        "messages": {
+          "messageValues": [
+            {
+              "type": "HumanMessagePromptTemplate",
+              "message": "Answer"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -384,
+        -96
+      ],
+      "id": "649a8ce5-a06f-442e-803e-506cc4125120",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        80
+      ],
+      "id": "63533ec6-abf0-4b1b-ab8d-300a5602306d",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "KyrFzbRHyy7tFBB8",
+          "name": "Groq account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "32c366e3-4782-4c4e-8172-d65b705641af",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d80c2718d71dcb67f863dc48084433d23332af682ac3c4d9ddced8fa6a7d62c4"
+  },
+  "id": "C2ZyHYMV4jSbVDdf",
+  "tags": []
+}
