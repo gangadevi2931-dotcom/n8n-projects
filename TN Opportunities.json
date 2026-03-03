@@ -1,0 +1,299 @@
+{
+  "name": "TN Opportunities",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 20
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -336,
+        -48
+      ],
+      "id": "e3f84f05-0622-45d6-84a5-5c4720ee6ce0",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://news.google.com/rss/search?q=Tamil+Nadu+hackathon+OR+symposium+OR+internship",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -176,
+        -48
+      ],
+      "id": "4fd13c13-2dea-4222-94c7-3ff38fc2f757",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6e256b42-78d6-41dc-b965-e47f10c0bee1",
+              "name": "Event Name",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "b42ea379-a956-4a7b-a1bf-92ce90c788ab",
+              "name": "Description",
+              "value": "={{ $json.contentSnippet }}",
+              "type": "string"
+            },
+            {
+              "id": "83e2f13f-9737-4fcc-ba91-26a38bbbbbe0",
+              "name": "link",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "422a2fb3-f869-427b-b186-be42bcc6f119",
+              "name": "Date",
+              "value": "={{ $json.pubDate }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        48,
+        -48
+      ],
+      "id": "ce7d3243-1f09-43ac-b43c-f3542cac8080",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "2aa2a62c-2239-4fa4-852b-a81a61f26223",
+              "leftValue": "hackathon",
+              "rightValue": "={{ $json[\"title\"] }}",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "4aaaac44-a66b-4807-bb76-702194ddd4b0",
+              "leftValue": "internship",
+              "rightValue": "={{ $json[\"title\"] }}",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "53426eed-503c-4f85-a6ef-764234dd63ad",
+              "leftValue": "=symposium",
+              "rightValue": "={{ $json[\"title\"] }}",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        784,
+        -48
+      ],
+      "id": "fd89d4fb-3f4e-437c-85b1-9fb3cc1bd202",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "gangadevi2931@gmail.com, shanmujuly@gmail.com",
+        "subject": "📢 Tamil Nadu – Upcoming Events",
+        "message": "=Hello,  Here are the upcoming opportunities in Tamil Nadu: {{ $('Limit').item.json['Event Name'] }}  \n\n{{ $('Limit').item.json.Description }}\n\n{{ $('Limit').item.json.link }} \n\n{{ $('Limit').item.json.Date }}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1072,
+        -64
+      ],
+      "id": "b091c74e-8b3b-4323-876e-c0a8f1e4262f",
+      "name": "Send a message",
+      "webhookId": "2504a59a-79d7-4e64-a9ed-f1ededb6abfc",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SWvXZruBnB8peKgZ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Skip to content\nYou said:\nPlease enaku konjam help pandriya\nChatGPT said:\nSure 😊 kandippa help pannren.\nNeenga entha problem / enna help venum nu konjam clear-aa sollunga.\n\nExample-aa:\n\nn8n / Make automation?\n\nLinkedIn / email issue?\n\nProject / assignment?\n\nPrompt / poster / content?\n\nCoding / exam help?\n\nEdhu venalum step-by-step explain pannren 👍\nNeenga sollunga, start pannalaam 👂✨\n\nYou said:\nNaa ippo project pannanum ai automation la but enaku idea illa nee konjam solluriya please. Ana anta project inta world ku inum intro aagiruka kudatu antha matiri nariya project idea kudu pa please\nChatGPT said:\nAww puriyuthu da 🤍\n“AI automation project pannanum… idea illa… unique-aa irukanum” — idhu romba common struggle. Don’t worry.\nNaa fresh + intro aagatha madhiri ideas kudukren. Copy-paste projects illa 🚀\n\n🔥 Rule (naan follow pannina rule)\nReal-world pain irukanum\n\nAI + Automation rendu irukanum\n\nCollege students / normal people use panna mudiyum\n\nIndia-centric (inga yaarum innum proper-aa pannala)\n\n🧠 TOP UNIQUE AI AUTOMATION PROJECT IDEAS (INTRO AAGATHA TYPE)\n1️⃣ AI Personal Life Autopilot\nPeople life itself automated\n\nWhat it does:\n\nDaily routine analyze pannum\n\nWhatsApp / Gmail / Calendar automate pannum\n\nStress / productivity low na suggestions\n\nAuto reminder + motivation messages\n\nAI: Habit prediction, emotion detection\nAutomation: Gmail, WhatsApp, Calendar, Notion\n👉 World-la iruku, but personal + student version illa\n\n2️⃣ AI College Assignment Auto-Manager\nStudents ku lifesaver\n\nWhat it does:\n\nAssignment PDF upload pannina\n\nDeadline detect pannum\n\nAuto reminder\n\nViva questions generate pannum\n\nPPT outline + explanation ready\n\nAI: NLP + summarization\nAutomation: Google Drive + Gmail + Docs\n👉 Unique because full academic flow automate pannum\n\n3️⃣ AI Scam Call / Message Predictor (India focus)\nUPI / loan / job scam detection\n\nWhat it does:\n\nSMS / WhatsApp message analyze\n\nScam probability score\n\nVoice call pattern analyze (optional)\n\nAlert + explanation\n\nAI: Text + voice classification\nAutomation: Mobile messages + alert system\n👉 India-specific = very strong project\n\n4️⃣ AI Emotional Companion for Students\nMental health automation\n\nWhat it does:\n\nDaily mood check (simple questions)\n\nVoice / text emotion detect\n\nLow mood → auto motivational content\n\nFriend / mentor alert (optional)\n\nAI: Emotion AI\nAutomation: WhatsApp / Email\n👉 Intro illa because full automation + emotion combo rare\n\n5️⃣ AI Resume + Skill Gap Auto-Advisor\nNot just resume builder\n\nWhat it does:\n\nResume analyze pannum\n\nJob role select pannina\n\nSkill gap show pannum\n\nDaily learning plan auto send pannum\n\nAI: Resume parsing + recommendation\nAutomation: Email / Telegram\n👉 Career guidance automation = powerful\n\n6️⃣ AI Voice-to-Workflow Generator (🔥🔥 Very Unique)\nSpeak → automation create\n\nExample:\n“Whenever I get a mail from sir, summary send pannanum WhatsApp-la”\n\nAI converts to:\n\nTrigger\n\nCondition\n\nAction\n\nAI: Speech → intent → logic\nAutomation: n8n / Make\n👉 Almost nobody doing this properly\n\n7️⃣ AI Smart Family Expense Guardian\nParents + students use panna\n\nWhat it does:\n\nExpense auto categorize\n\nPredict next month money issue\n\nAlert before problem\n\nSuggest savings\n\nAI: Time-series prediction\nAutomation: Google Sheet + WhatsApp\n👉 India middle-class focus = fresh\n\n💎 SUPER UNIQUE FINAL YEAR LEVEL IDEA (🔥🔥🔥)\nAI Auto-Decision Engine\nHuman decisions automated\n\nExamples:\n\n“Should I study today or rest?”\n\n“Should I accept this job?”\n\n“Is this person good or toxic?”\n\nHow:\n\nPast data\n\nMood\n\nTime\n\nPattern\n\nAI: Decision reasoning\nAutomation: Notifications + logs\n👉 World-la research stage, student projects illa\n\n🛠 Tech Stack (Simple-aa start pannalaam)\nAI: OpenAI / Gemini / HuggingFace\n\nAutomation: n8n / Make\n\nBackend: Python / Node\n\nFrontend: Simple web / mobile\n\nDatabase: Google Sheets / Firebase\n\n🎯 Next Step (Important)\nNeenga sollunga:\n1️⃣ Beginner / intermediate / advanced?\n2️⃣ Solo project ah or team ah?\n3️⃣ College final year project ah?\n4️⃣ Web app / mobile / automation only?\n\nIdha sollunga da…\nNaa one idea select panni → full project flow → diagram → explanation → viva questions ellam ready panniduven 😌🔥\n\nYou said:\nWorld level ahh research panni answer varata project kudu pa but it is possible in ai automation\nChatGPT said:\nSuper question da 🔥\n“World-level research + AI automation + still possible” — idhu TOP-TIER FINAL YEAR / MS / STARTUP-LEVEL expectation.\nNaa summa idea sollala… research gap base pannitu kudukren.\n\n🌍 WORLD-LEVEL AI AUTOMATION PROJECT IDEAS\n(Research-driven + still buildable by a student)\n\n🔴 IMPORTANT TRUTH (short-aa sollren)\nWorld-la papers iruku\n\nBut real automation product illa\n\nThat gap-a fill pannura project dhaan 🔥\n\n🥇 PROJECT 1: AI Autonomous Decision Orchestrator (ADO)\nHuman decision-making itself automated\n\n🔬 Research gap:\nAI gives answers\n\nHumans still decide manually\n\nNo system that observes → learns → decides → automates\n\n💡 What your system does:\nObserve user behavior (time, mood, past outcomes)\n\nLearn decision patterns\n\nPredict best decision\n\nAuto-execute via automation\n\n🧠 Example:\n“Today I usually scroll phone → waste time → regret”\nAI learns this and:\n\nBlocks distractions\n\nSends study plan\n\nAuto schedules focus session\n\n🛠 AI:\nReinforcement Learning (light version)\n\nPreference learning\n\nLLM reasoning\n\n⚙ Automation:\nCalendar\n\nApp triggers\n\nEmail / WhatsApp\n\n👉 World-level research exists, but NO student-level automation tool exists\n\n🥈 PROJECT 2: Self-Evolving AI Automation System\nAutomation that improves itself\n\n🔬 Research gap:\nAutomations are static\n\nNobody builds self-learning workflows\n\n💡 What it does:\nMonitor workflow success/failure\n\nOptimize steps automatically\n\nReplace bad logic with better one\n\n🧠 Example:\nEmail summary automation\n\nUser ignores messages → AI changes timing + format\n\nLearns best behavior\n\n🛠 AI:\nFeedback loop learning\n\nPrompt optimization\n\nPerformance scoring\n\n⚙ Automation:\nn8n / Make\n\nLogs + analytics\n\n👉 Research concept yes, real implementation almost zero\n\n🥉 PROJECT 3: AI Human Context Engine (HCE)\nAI understands “situation”, not just command\n\n🔬 Research gap:\nAI doesn’t understand:\n\nStress\n\nUrgency\n\nSocial context\n\n💡 What it does:\nReads time, tone, behavior\n\nUnderstands context\n\nChanges automation behavior\n\n🧠 Example:\nIf user says:\n\n“Later do it”\n\nAI understands:\n\nDeadline\n\nMood\n\nPast procrastination\n\nThen:\n\nCreates reminders\n\nBreaks task into steps\n\nAuto-follows up\n\n🛠 AI:\nContext modeling\n\nEmotion detection\n\nIntent prediction\n\n👉 World-level NLP research topic\n\n🧠 PROJECT 4: AI Personal Memory Graph (PMG)\nExternal brain for humans\n\n🔬 Research gap:\nHumans forget decisions, lessons\n\nAI chat history not used deeply\n\n💡 What it does:\nStores decisions + outcomes\n\nCreates memory graph\n\nUses it for future automation\n\n🧠 Example:\n“Last time you skipped class, marks dropped”\n\nAI reminds with evidence\n\n🛠 AI:\nKnowledge graph\n\nLong-term memory\n\nReasoning\n\n👉 Research papers exist, real tools very rare\n\n🔥 PROJECT 5 (MOST POWERFUL):\nAI Intent → Automation Compiler\nNatural language → full automation logic\n\n🔬 Research gap:\nTools need technical users\n\nNo compiler for human intent\n\n💡 What it does:\nUser says:\n\n“If I get mail from HOD, alert me immediately and summarize”\n\nAI converts to:\n\nTrigger\n\nCondition\n\nAction\n\nException handling\n\n🛠 AI:\nSemantic parsing\n\nLogic generation\n\nValidation\n\n⚙ Automation:\nn8n workflow auto-generated\n\n👉 This is WORLD-LEVEL but BUILDABLE\n\n🧪 WHICH ONE IS BEST FOR YOU?\nGoal\tBest Project\nResearch paper\tDecision Orchestrator\nProduct demo\tIntent → Automation\nViva wow factor\tSelf-Evolving Automation\nMental health\tContext Engine\nLong-term impact\tMemory Graph\n🚀 REALITY CHECK (honest-aa)\nYou don’t need full system.\nYou need:\n\nOne core idea\n\nOne working prototype\n\nOne clear research gap explanation\n\nThat’s enough to beat 99% projects.\n\n🎯 NEXT (very important)\nSollunga da:\n1️⃣ Final year project ah?\n2️⃣ Paper publish panna plan iruka?\n3️⃣ Solo / team?\n4️⃣ Python / JS edhu comfortable?\n\nIdha sonna naa\n👉 ONE project select panni\n👉 Problem statement\n👉 Architecture diagram (text-based)\n👉 Modules\n👉 How to implement step-by-step\n👉 Viva questions + answers\n\nellam ready panniduven 🔥😌\n\n\n\n\nNo file chosenNo file chosen\nChatGPT can make mistakes. Check important info. See Cookie Preferences.",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        448,
+        -48
+      ],
+      "id": "31d1a392-d8ae-4870-87eb-35d479aa6688",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        448,
+        160
+      ],
+      "id": "266b2ab9-76df-4427-b883-5f13deb18541",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "Ks3t3TvLvFFhuIv1",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        240,
+        -48
+      ],
+      "id": "263259e9-345a-4993-8083-f7bda3ae7dd7",
+      "name": "Limit"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "bc9a24d5-d638-4b2f-b9ed-d710df1e8ea8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ddbd41ba0a1bccd0f2342b98190aac0e0dcffee2052a66119963202059f5afcb"
+  },
+  "id": "Pw-7y51-aIuyCGDtnfEOC",
+  "tags": []
+}
