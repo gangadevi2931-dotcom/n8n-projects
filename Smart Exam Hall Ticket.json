@@ -1,0 +1,400 @@
+{
+  "name": "Smart Exam Hall Ticket",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1dBYT3_IEWTPqB76UMJeNBEHaiODG7sgOAioh8iVpsQU",
+          "mode": "list",
+          "cachedResultName": "Copy of Student Exam Hall Ticket Form  (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dBYT3_IEWTPqB76UMJeNBEHaiODG7sgOAioh8iVpsQU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1969051929,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dBYT3_IEWTPqB76UMJeNBEHaiODG7sgOAioh8iVpsQU/edit#gid=1969051929"
+        },
+        "options": {
+          "columnsToWatch": [
+            "Student Name ",
+            "  Register Number  ",
+            "  Email ID  "
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        16
+      ],
+      "id": "40970d22-da22-4f4f-bb37-35f1e38decd0",
+      "name": "Students Data",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "sxdevxn4Si5hS0Xy",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "bc6af0b7-08a9-4ded-af21-a55365aac1de",
+              "leftValue": "Student Name",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "c7cbcd20-baac-41a0-a7ef-a1f23f6fc740",
+              "leftValue": "Register Number",
+              "rightValue": 0,
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "3d43f5c4-d237-4c38-b701-1a81ba5d5b3f",
+              "leftValue": "Email ID",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -320,
+        16
+      ],
+      "id": "8979b4db-113e-4f5d-863a-ec392fa581f2",
+      "name": "Validate Student Details"
+    },
+    {
+      "parameters": {
+        "sendTo": "gangadevi2931@gmail.com",
+        "subject": "⚠️ Hall Ticket Generation Failed",
+        "message": "Hall ticket generation failed due to missing student information.  Please check the Google Sheet entry and correct the data.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "005a8c85-c915-4891-85a2-2737a7c8509b",
+      "name": "Admin Alert",
+      "webhookId": "92299fc7-189e-4efa-bb45-7bb6ee191e66",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "NS0uhHq0Mal1p4aK",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "61799bee-32e8-443e-b107-c50eed953ecd",
+              "name": "clean_text",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -192,
+        240
+      ],
+      "id": "cdd6de2f-f757-44ff-b7f7-07a9f829bbab",
+      "name": "Clean and Format Hall Ticket Text"
+    },
+    {
+      "parameters": {
+        "folderId": "10MnfJgafq70kp9uwzCSFEmJ7kMnNkihU",
+        "title": "=Exam_Hall_Ticket_ {{ $('Students Data').item.json['  Register Number  '] }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        64,
+        240
+      ],
+      "id": "3336a33e-d26e-40d4-8a4b-fdc289f14ef7",
+      "name": "Create Hall Ticket Document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "5EuT8ASr4cXWrotl",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $('Clean and Format Hall Ticket Text').item.json.clean_text }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        464
+      ],
+      "id": "94925e61-f1b2-4426-a1d7-4b06871ebeab",
+      "name": "Update Hall Ticket Content",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "5EuT8ASr4cXWrotl",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{$node[\"Update Hall Ticket Content\"].json[\"documentId\"]}}",
+          "mode": "id"
+        },
+        "options": {
+          "binaryPropertyName": "={{ $json.documentId }}",
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf",
+              "drawingsToFormat": "application/pdf",
+              "slidesToFormat": "application/pdf",
+              "sheetsToFormat": "application/pdf"
+            }
+          },
+          "fileName": "=Exam Hall Ticket "
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -288,
+        464
+      ],
+      "id": "06368395-aeb5-4123-beff-2c69629ffcc2",
+      "name": "Convert Hall Ticket to PDF",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "0yoh49XkC99zPfdT",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Students Data').item.json['  Email ID  '] }}",
+        "subject": "=Exam Hall Ticket – {{ $('Students Data').item.json['  Register Number  '] }}",
+        "emailType": "text",
+        "message": "=Dear Student, \n\n       \n     {{ $('Students Data').item.json['Student Name '] }} your exam hall ticket is attached with this email.  Please download and carry it to the examination hall.  All the best for your examination. \n\n   Regards, Examination Cell ",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "={{ $('Update Hall Ticket Content').item.json.documentId }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -16,
+        464
+      ],
+      "id": "8b5672e6-ac1a-4856-bc28-1e37cb143a86",
+      "name": "Send a Hall Ticket to Student",
+      "webhookId": "6e1f7f9e-cda2-446a-b588-a854c79ec9f9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "NS0uhHq0Mal1p4aK",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Generate a professional and official exam hall ticket in plain text format.\n\nSTRICT RULES:\nDo not use asterisks or stars.\nDo not use markdown or formatting symbols.\nDo not use bullet symbols or hyphens.\nDo not use special characters for styling.\nUse only plain text.\nUse spacing and alignment for clarity.\nAll section headings must be written in FULL CAPITAL LETTERS.\nThe content must look like an official exam hall ticket document suitable for printing and PDF.\n\nOUTPUT FORMAT:\n\nEXAM HALL TICKET\n\n\nSTUDENT INFORMATION\nStudent Name        :{{ $json['Student Name '] }}\nRegister Number     : {{ $json['  Register Number  '] }}\n\n\nEXAM SCHEDULE\nExam Name           : {{ $json['  Exam Name  '] }}\nExam Date           :{{ $json['  Exam Date  '] }}\nExam Time           : {{ $json['  Exam Time  '] }}\n\n\nEXAM CENTER DETAILS\nExam Center         : {{ $json['  Exam Center  '] }}\n\n\nIMPORTANT INSTRUCTIONS\n1. Candidates must carry this hall ticket to the examination hall.\n2. Candidates must reach the examination center at least 30 minutes before the exam time.\n3. Mobile phones, smart watches, calculators, and other electronic devices are not permitted inside the examination hall.\n4. Candidates must strictly follow all examination rules and regulations.\n\n\nThis hall ticket is system generated and does not require a signature.\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -608,
+        240
+      ],
+      "id": "9e00bf94-c672-4011-b988-0ded7cf34f5a",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "UY3Czs9fSCh2m0VC",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Students Data": {
+      "main": [
+        [
+          {
+            "node": "Validate Student Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Student Details": {
+      "main": [
+        [
+          {
+            "node": "Admin Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean and Format Hall Ticket Text": {
+      "main": [
+        [
+          {
+            "node": "Create Hall Ticket Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Hall Ticket Document": {
+      "main": [
+        [
+          {
+            "node": "Update Hall Ticket Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Hall Ticket Content": {
+      "main": [
+        [
+          {
+            "node": "Convert Hall Ticket to PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Hall Ticket to PDF": {
+      "main": [
+        [
+          {
+            "node": "Send a Hall Ticket to Student",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Clean and Format Hall Ticket Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "377e6644-b5ad-4ea5-95fd-2e017bf0f852",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c08e7fd954a8823f4b35ed6b18709e7921fcb8b6c73304f8753851915e896b58"
+  },
+  "id": "xvjXBYGTDABn3xgjnTBLP",
+  "tags": []
+}
